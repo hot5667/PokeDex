@@ -28,8 +28,15 @@ const TypesContainer = styled.div`
   margin-top: 16px;
 `;
 
-const PokedexDetails = ({ number, name, image, types }) => {
+const PokedexDetails = ({ number, name, image, types = [] }) => {
   const navigate = useNavigate();
+
+  const typeNames = Array.isArray(types) && types.length > 0
+    ? types.map((type, index) => {
+        const typeName = typeof type === 'string' ? type : type.name;
+        return <TypeBadge key={index} type={typeName} />;
+      })
+    : ' ';
 
   const handleImageClick = () => {
     navigate(`/pokemon/${number}`);
@@ -39,9 +46,7 @@ const PokedexDetails = ({ number, name, image, types }) => {
     <DetailsContainer onClick={handleImageClick}>
       <PokemonImage className="nes-container is-rounded" src={image} alt={name} />
       <TypesContainer>
-        {types.map((type) => (
-          <TypeBadge key={type.name} type={type} /> 
-        ))}
+        {typeNames}
       </TypesContainer>
     </DetailsContainer>
   );

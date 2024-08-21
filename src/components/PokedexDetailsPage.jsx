@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { fetchPokemonDetails } from '../features/pokemonSlice';
 import ErrorPage from './ErrorPage';
-import TypeBadge from './TypeBadge;';
+import TypeBadge from './TypeBadge';
 
 
 const FullScreenContainer = styled.div`
@@ -39,13 +39,13 @@ const TypeList = styled.div`
 `;
 
 const PokedexDetailsPage = () => {
-  const { id } = useParams(); // URL 파라미터에서 id를 가져옵니다.
+  const { id } = useParams(); 
   const dispatch = useDispatch();
   const { data: pokemonDetails, isLoading, error } = useSelector((state) => state.pokemon);
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchPokemonDetails(id)); // id를 사용하여 포켓몬 세부 정보를 요청합니다.
+      dispatch(fetchPokemonDetails(id));
     }
   }, [id, dispatch]);
 
@@ -74,8 +74,9 @@ const PokedexDetailsPage = () => {
   }
 
   const { sprites, name, types, description } = pokemonDetails;
-  const typeNames = types?.map(type => <TypeBadge key={type} type={type} />) || 'Unknown';
-
+  const typeNames = Array.isArray(types) && types.length > 0 
+  ? types.map(type => <TypeBadge key={type} type={type} />)
+  : 'Unknown';
   return (
     <FullScreenContainer>
       <DetailsContainer>

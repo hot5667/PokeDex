@@ -1,4 +1,3 @@
-// src/components/TypeBadge.jsx
 import React from 'react';
 import styled from '@emotion/styled';
 import { typeColors, koTypeNames } from '../constants/typeName'; 
@@ -15,8 +14,8 @@ const Badge = styled.div`
 `;
 
 const TypeBadge = ({ type }) => {
-  const typeNameInKorean = koTypeNames[type] || type;
-  return <Badge type={type}>{typeNameInKorean}</Badge>;
+  const typeName = koTypeNames[type] || type;
+  return <Badge type={type}>{typeName}</Badge>;
 };
 
 export default TypeBadge;
