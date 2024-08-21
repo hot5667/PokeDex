@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
+import TypeBadge from './TypeBadge'; 
 
 const DetailsContainer = styled.div`
   display: flex;
@@ -11,6 +12,7 @@ const DetailsContainer = styled.div`
   padding: 20px;
   background-color: #fff;
   border-radius: 12px;
+  cursor: pointer;
 `;
 
 const PokemonImage = styled.img`
@@ -19,7 +21,14 @@ const PokemonImage = styled.img`
   image-rendering: pixelated;
 `;
 
-const PokedexDetails = ({ number, name, image }) => {
+const TypesContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+`;
+
+const PokedexDetails = ({ number, name, image, types }) => {
   const navigate = useNavigate();
 
   const handleImageClick = () => {
@@ -28,7 +37,12 @@ const PokedexDetails = ({ number, name, image }) => {
 
   return (
     <DetailsContainer onClick={handleImageClick}>
-      <PokemonImage className = 'nes-container is-rounded' src={image} alt={name} />
+      <PokemonImage className="nes-container is-rounded" src={image} alt={name} />
+      <TypesContainer>
+        {types.map((type) => (
+          <TypeBadge key={type.name} type={type} /> 
+        ))}
+      </TypesContainer>
     </DetailsContainer>
   );
 };

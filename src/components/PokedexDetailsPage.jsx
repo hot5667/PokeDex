@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
-import { fetchPokemonStart, fetchPokemonSuccess, fetchPokemonFailure, setSelectedId } from '../features/pokemonSlice.js';
+import { fetchPokemonDetails } from '../features/pokemonSlice';
 import ErrorPage from './ErrorPage';
+import TypeBadge from './TypeBadge;';
+
 
 const FullScreenContainer = styled.div`
   display: flex;
@@ -30,67 +32,63 @@ const PokemonImage = styled.img`
   image-rendering: pixelated;
 `;
 
-const PokemonType = styled.div`
-  font-size: 1.2rem;
-  margin: 10px 0;
-`;
-
-const PokemonDescription = styled.p`
-  font-size: 1rem;
-  text-align: center;
-  margin: 10px 0;
+const TypeList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 `;
 
 const PokedexDetailsPage = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // URL 파라미터에서 id를 가져옵니다.
   const dispatch = useDispatch();
-  const { data, selectedId, isLoading, error } = useSelector(state => state.pokemon);
-  const pokemon = data.find(p => p.id === parseInt(id, 10));
+  const { data: pokemonDetails, isLoading, error } = useSelector((state) => state.pokemon);
 
   useEffect(() => {
-    dispatch(setSelectedId(id));
-    const fetchPokemonDetails = async () => {
-      dispatch(fetchPokemonStart());
-      try {
-        const numericId = id.replace(/^0+/, '');
-        
-        const pokemonResponse = await fetch(`${import.meta.env.VITE_REACT_APP_POKEMON_API}/pokemon/${numericId}`);
-        if (!pokemonResponse.ok) throw new Error('포켓몬 상세 데이터를 불러오는 데 실패했습니다.');
-        const pokemonData = await pokemonResponse.json();
-
-        const speciesResponse = await fetch(`${import.meta.env.VITE_REACT_APP_POKEMON_API}/pokemon-species/${numericId}`);
-        if (!speciesResponse.ok) throw new Error('포켓몬 설명 데이터를 불러오는 데 실패했습니다.');
-        const speciesData = await speciesResponse.json();
-
-        const koreanName = speciesData.names.find(name => name.language.name === 'ko')?.name || pokemonData.name;
-        const types = pokemonData.types.map(typeInfo => typeInfo.type.name).join(', ');
-        const flavorTextEntry = speciesData.flavor_text_entries.find(entry => entry.language.name === 'ko');
-        const flavorText = flavorTextEntry ? flavorTextEntry.flavor_text : '설명 없음';
-
-        dispatch(fetchPokemonSuccess({
-          ...pokemonData,
-          name: koreanName,
-          types,
-          description: flavorText,
-        }));
-      } catch (err) {
-        dispatch(fetchPokemonFailure(err.message));
-      }
-    };
-
-    fetchPokemonDetails();
+    if (id) {
+      dispatch(fetchPokemonDetails(id)); // id를 사용하여 포켓몬 세부 정보를 요청합니다.
+    }
   }, [id, dispatch]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <FullScreenContainer><ErrorPage errorCode={500} message={error} /></FullScreenContainer>;
+  if (isLoading) {
+    return (
+      <FullScreenContainer>
+        <div>Loading...</div>
+      </FullScreenContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <FullScreenContainer>
+        <ErrorPage errorCode={500} message={error} />
+      </FullScreenContainer>
+    );
+  }
+
+  if (!pokemonDetails) {
+    return (
+      <FullScreenContainer>
+        <ErrorPage errorCode={404} message="포켓몬을 찾을 수 없습니다." />
+      </FullScreenContainer>
+    );
+  }
+
+  const { sprites, name, types, description } = pokemonDetails;
+  const typeNames = types?.map(type => <TypeBadge key={type} type={type} />) || 'Unknown';
 
   return (
-    <DetailsContainer>
-      <PokemonImage src={pokemon.sprites.front_default} alt={pokemon.name} />
-      <h2>{pokemon.name}</h2>
-      <div>타입: {pokemon.types}</div>
-      <p>{pokemon.description}</p>
-    </DetailsContainer>
+    <FullScreenContainer>
+      <DetailsContainer>
+        <PokemonImage
+          className='nes-container is-rounded'
+          src={sprites?.front_default || 'placeholder_image_url'}
+          alt={name || 'Unknown'}
+        />
+        <h2>{name || 'Unknown'}</h2>
+        <div>타입: {typeNames}</div>
+        <p>{description || 'No description available.'}</p>
+      </DetailsContainer>
+    </FullScreenContainer>
   );
 };
 

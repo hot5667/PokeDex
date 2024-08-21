@@ -1,5 +1,6 @@
-import React, { useEffect, useCallback, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
 import useEmblaCarousel from 'embla-carousel-react';
 import 'nes.css/css/nes.min.css';
@@ -10,6 +11,7 @@ import PokedexDetailsPage from './components/PokedexDetailsPage';
 import CarouselContainer from './components/CarouselContainer';
 import LoadingBar from './components/LodingBar';
 import ErrorPage from './components/ErrorPage';
+import { fetchPokemonBasicData } from './features/pokemonBasicSlice';
 
 const FullScreenContainer = styled.div`
   display: flex;
@@ -51,10 +53,10 @@ const ContentWrapper = styled.div`
 `;
 
 const App = () => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [pokemonData, setPokemonData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); 
-  const [error, setError] = useState(null); 
+  const dispatch = useDispatch();
+  const { data: pokemonData, isLoading, error } = useSelector(state => state.pokemonBasic); // 새로운 slice에서 데이터 가져오기
+
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     axis: 'y',
     dragFree: true,
@@ -62,35 +64,9 @@ const App = () => {
     slidesToScroll: 1,
   });
 
-  const fetchPokemonData = useCallback(async () => {
-    setIsLoading(true);
-    setError(null); 
-    try {
-      const promises = Array.from({ length: `${import.meta.env.VITE_REACT_APP_POKEMON_COUNT}` }, (_, i) => {
-        const id = i + 1;
-        return fetch(`${import.meta.env.VITE_REACT_APP_POKEMON_API}/pokemon-species/${id}`)
-          .then((response) => response.json())
-          .then((data) => {
-            const koreanName = data.names.find((name) => name.language.name === 'ko').name;
-            return fetch(`${import.meta.env.VITE_REACT_APP_POKEMON_API}/pokemon/${id}`)
-              .then((spriteResponse) => spriteResponse.json())
-              .then((spriteData) => ({
-                number: `00${id}`.slice(-3),
-                name: koreanName,
-                image: spriteData.sprites.front_default,
-              }));
-          });
-      });
-
-      const fetchedData = await Promise.all(promises);
-      setPokemonData(fetchedData);
-      setSelectedIndex(0);
-    } catch (err) {
-      setError('포켓몬 데이터를 가져오는 데 실패했습니다. 나중에 다시 시도해 주세요.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const fetchPokemonData = useCallback(() => {
+    dispatch(fetchPokemonBasicData()); 
+  }, [dispatch]);
 
   useEffect(() => {
     fetchPokemonData();
@@ -125,7 +101,7 @@ const App = () => {
   if (error) {
     return (
       <FullScreenContainer>
-        <ErrorPage errorCode={500} /> {}
+        <ErrorPage errorCode={500} message={error} />
       </FullScreenContainer>
     );
   }
@@ -157,7 +133,6 @@ const App = () => {
           }
         />
         <Route path="/pokemon/:id" element={<PokedexDetailsPage />} />
-        <Route path ="/pokemon/:id" element={<PokedexDetails />} />
       </Routes>
     </Router>
   );
