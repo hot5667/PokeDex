@@ -25,10 +25,10 @@ const PokemonItem = styled.button`
   justify-content: center;
   cursor: pointer;
   margin-bottom: 5px;
-  padding: 0.5rem;
+  padding: 1.5rem;
   font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif; 
-  font-size: 14px; 
-  letter-spacing: 1px; 
+  font-size: 20px; 
+  letter-spacing: 1px;
 
   color: ${({ isActive }) => (isActive ? '#000' : '#333')}; 
   box-shadow: ${({ isActive }) => 
@@ -38,7 +38,7 @@ const PokemonItem = styled.button`
 
   &.nes-btn {
     font-family: 'NeoDunggeunmoPro-Regular','Press Start 2P', cursive; 
-    font-size: 14px; 
+    font-size: 20px; 
     letter-spacing: 1px; 
     background-image: linear-gradient(to bottom, #ffffff, #e0e0e0);
     border-radius: 3px; 
