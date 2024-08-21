@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
 
 const DetailsContainer = styled.div`
   display: flex;
@@ -18,10 +19,16 @@ const PokemonImage = styled.img`
   image-rendering: pixelated;
 `;
 
-const PokedexDetails = ({name, image}) => {
+const PokedexDetails = ({ number, name, image }) => {
+  const navigate = useNavigate();
+
+  const handleImageClick = () => {
+    navigate(`/pokemon/${number}`);
+  };
+
   return (
-    <DetailsContainer>
-      <PokemonImage className = 'nes-container is-rounded'src={image} alt={name} />
+    <DetailsContainer onClick={handleImageClick}>
+      <PokemonImage src={image} alt={name} />
     </DetailsContainer>
   );
 };

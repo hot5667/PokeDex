@@ -1,7 +1,6 @@
-// ErrorPage.jsx
 import React from 'react';
 import styled from '@emotion/styled';
-import 'nes.css/css/nes.min.css';
+import 'nes.css/css/nes.min.css'; 
 
 const Container = styled.div`
   display: flex;
@@ -9,25 +8,41 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f0f0f0;
+  color: #24292e;
+  font-family: 'NeoDunggeunmoPro-Regular', 'Press Start 2P', sans-serif; 
+  text-align: center;
 `;
 
-const Message = styled.div`
+const Title = styled.h1`
+  font-size: 5rem;
+  margin: 0;
+  color: #d73a49;
+`;
+
+const SubTitle = styled.h2`
   font-size: 2rem;
-  text-align: center;
-  margin-bottom: 1rem;
+  margin: 0.5rem 0;
+  color: #586069;
+`;
+
+const Message = styled.p`
+  font-size: 1.25rem;
+  color: #6a737d;
+  margin: 1rem 0;
 `;
 
 const Button = styled.button`
-  background-color: #ff4040;
-  color: white;
+  background-color: #007bff;
+  color: #ffffff;
   border: none;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
   font-size: 1rem;
   cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease;
   &:hover {
-    background-color: #ff0000;
+    background-color: #0056b3;
   }
 `;
 
@@ -35,19 +50,20 @@ const ErrorPage = ({ errorCode }) => {
   const getErrorMessage = (code) => {
     switch (code) {
       case 404:
-        return "Oops! Page not found.";
+        return "앗! 페이지를 찾을 수 없습니다.";
       case 505:
-        return "Server error. Please try again later.";
+        return "서버 오류입니다. 나중에 다시 시도해 주세요.";
       default:
-        return "An unexpected error occurred.";
+        return "포켓몬 데이터를 가져오는 데 실패했습니다. 나중에 다시 시도해 주세요.";
     }
   };
 
   return (
-    <Container className="nes-container with-title is-centered">
-      <p className="title">Error {errorCode}</p>
+    <Container>
+      <Title>{errorCode}</Title>
+      <SubTitle>{errorCode === 404 ? '페이지를 찾을 수 없습니다.' : '서버 오류입니다.'}</SubTitle>
       <Message>{getErrorMessage(errorCode)}</Message>
-      <Button onClick={() => window.location.href = '/'}>Go to Home</Button>
+      <Button onClick={() => window.location.href = '/'}>홈으로 돌아가기</Button>
     </Container>
   );
 };

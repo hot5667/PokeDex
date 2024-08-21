@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import useEmblaCarousel from 'embla-carousel-react';
 import 'nes.css/css/nes.min.css';
@@ -66,11 +67,11 @@ const App = () => {
     try {
       const promises = Array.from({ length: 151 }, (_, i) => {
         const id = i + 1;
-        return fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`)
+        return fetch(`${import.meta.env.VITE_REACT_APP_POKEMON_API}/pokemon-species/${id}`)
           .then((response) => response.json())
           .then((data) => {
             const koreanName = data.names.find((name) => name.language.name === 'ko').name;
-            return fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+            return fetch(`${import.meta.env.VITE_REACT_APP_POKEMON_API}/pokemon/${id}`)
               .then((spriteResponse) => spriteResponse.json())
               .then((spriteData) => ({
                 number: `00${id}`.slice(-3),
@@ -79,7 +80,6 @@ const App = () => {
               }));
           });
       });
-
       const fetchedData = await Promise.all(promises);
       setPokemonData(fetchedData);
       setSelectedIndex(0);
@@ -129,24 +129,34 @@ const App = () => {
   }
 
   return (
-    <Container>
-      <PokedexUI className="nes-container is-rounded">
-        <PokedexHeader />
-        <ContentWrapper>
-          <PokedexDetails
-            number={pokemonData[selectedIndex]?.number}
-            name={pokemonData[selectedIndex]?.name}
-            image={pokemonData[selectedIndex]?.image}
-          />
-          <CarouselContainer
-            pokemonData={pokemonData}
-            selectedIndex={selectedIndex}
-            onSelect={handleSelect}
-            emblaRef={emblaRef}
-          />
-        </ContentWrapper>
-      </PokedexUI>
-    </Container>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Container>
+              <PokedexUI className="nes-container is-rounded">
+                <PokedexHeader />
+                <ContentWrapper>
+                  <PokedexDetails
+                    number={pokemonData[selectedIndex]?.number}
+                    name={pokemonData[selectedIndex]?.name}
+                    image={pokemonData[selectedIndex]?.image}
+                  />
+                  <CarouselContainer
+                    pokemonData={pokemonData}
+                    selectedIndex={selectedIndex}
+                    onSelect={handleSelect}
+                    emblaRef={emblaRef}
+                  />
+                </ContentWrapper>
+              </PokedexUI>
+            </Container>
+          }
+        />
+        <Route path="/pokemon/:id" element={<PokedexDetails />} />
+      </Routes>
+    </Router>
   );
 };
 
