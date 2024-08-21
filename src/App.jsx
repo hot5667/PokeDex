@@ -6,6 +6,7 @@ import 'nes.css/css/nes.min.css';
 
 import PokedexHeader from './components/PokedexHeader';
 import PokedexDetails from './components/PokedexDetails';
+import PokedexDetailsPage from './components/PokedexDetailsPage';
 import CarouselContainer from './components/CarouselContainer';
 import LoadingBar from './components/LodingBar';
 import ErrorPage from './components/ErrorPage';
@@ -65,7 +66,7 @@ const App = () => {
     setIsLoading(true);
     setError(null); 
     try {
-      const promises = Array.from({ length: 151 }, (_, i) => {
+      const promises = Array.from({ length: `${import.meta.env.VITE_REACT_APP_POKEMON_COUNT}` }, (_, i) => {
         const id = i + 1;
         return fetch(`${import.meta.env.VITE_REACT_APP_POKEMON_API}/pokemon-species/${id}`)
           .then((response) => response.json())
@@ -80,6 +81,7 @@ const App = () => {
               }));
           });
       });
+
       const fetchedData = await Promise.all(promises);
       setPokemonData(fetchedData);
       setSelectedIndex(0);
@@ -154,7 +156,8 @@ const App = () => {
             </Container>
           }
         />
-        <Route path="/pokemon/:id" element={<PokedexDetails />} />
+        <Route path="/pokemon/:id" element={<PokedexDetailsPage />} />
+        <Route path ="/pokemon/:id" element={<PokedexDetails />} />
       </Routes>
     </Router>
   );

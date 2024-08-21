@@ -28,7 +28,7 @@ const PokedexDetails = ({ number, name, image }) => {
 
   return (
     <DetailsContainer onClick={handleImageClick}>
-      <PokemonImage src={image} alt={name} />
+      <PokemonImage className = 'nes-container is-rounded' src={image} alt={name} />
     </DetailsContainer>
   );
 };
