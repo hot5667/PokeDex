@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { fetchPokemonDetails } from '../features/pokemonSlice';
-import ErrorPage from './ErrorPage';
+import ErrorPage from '../pages/ErrorPage';
 import TypeBadge from './TypeBadge';
 
 

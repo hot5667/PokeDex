@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useSelector, useDispatch, Provider } from 'react-redux'; 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
 import useEmblaCarousel from 'embla-carousel-react';
 import 'nes.css/css/nes.min.css';
@@ -9,9 +9,11 @@ import PokedexHeader from './components/PokedexHeader';
 import PokedexDetails from './components/PokedexDetails';
 import PokedexDetailsPage from './components/PokedexDetailsPage';
 import CarouselContainer from './components/CarouselContainer';
-import LoadingBar from './components/LodingBar';
-import ErrorPage from './components/ErrorPage';
-import { fetchPokemonBasicData } from './features/pokemonBasicSlice';
+import LoadingBar from './pages/LodingPage';
+import ErrorPage from './pages/ErrorPage';
+import PokedexSort from './components/PokedexSort';
+import PokedexFilter from './components/PokedexFilter';
+import store from './store'; 
 
 const FullScreenContainer = styled.div`
   display: flex;
@@ -27,7 +29,7 @@ const Container = styled.div`
   justify-content: center;
   height: 100vh;
   background-color: #d1d1d1;
-  font-family: 'NeoDunggeunmoPro-Regular', 'Press Start 2P', sans-serif; 
+  font-family: 'NeoDunggeunmoPro-Regular', 'Press Start 2P', sans-serif;
 `;
 
 const PokedexUI = styled.div`
@@ -42,7 +44,7 @@ const PokedexUI = styled.div`
   height: 90vh;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  text-align: center; 
+  text-align: center;
 `;
 
 const ContentWrapper = styled.div`
@@ -54,9 +56,11 @@ const ContentWrapper = styled.div`
 
 const App = () => {
   const dispatch = useDispatch();
-  const { data: pokemonData, isLoading, error } = useSelector(state => state.pokemonBasic); // 새로운 slice에서 데이터 가져오기
+  const { data: pokemonData, isLoading, error } = useSelector(state => state.pokemonBasic);
 
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [sortedPokemonData, setSortedPokemonData] = useState([]);
+  const [filteredPokemonData, setFilteredPokemonData] = useState([]);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     axis: 'y',
     dragFree: true,
@@ -64,13 +68,38 @@ const App = () => {
     slidesToScroll: 1,
   });
 
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
   const fetchPokemonData = useCallback(() => {
-    dispatch(fetchPokemonBasicData()); 
+    dispatch({ type: 'pokemonBasic/fetchPokemonBasicData' });
   }, [dispatch]);
 
   useEffect(() => {
     fetchPokemonData();
   }, [fetchPokemonData]);
+
+  useEffect(() => {
+    if (pokemonData) {
+      setSortedPokemonData(pokemonData);
+      setFilteredPokemonData(pokemonData);
+    }
+  }, [pokemonData]);
+
+  const handleSort = (sortedData) => {
+    setSortedPokemonData(sortedData);
+    setFilteredPokemonData(sortedData);
+  };
+
+  const handleFilter = (type) => {
+    if (type) {
+      const filteredData = sortedPokemonData.filter(pokemon =>
+        pokemon.types.includes(type)
+      );
+      setFilteredPokemonData(filteredData);
+    } else {
+      setFilteredPokemonData(sortedPokemonData);
+    }
+  };
 
   const handleSelect = useCallback((index) => {
     setSelectedIndex(index);
@@ -107,34 +136,43 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Container>
-              <PokedexUI className="nes-container is-rounded">
-                <PokedexHeader />
-                <ContentWrapper>
-                  <PokedexDetails
-                    number={pokemonData[selectedIndex]?.number}
-                    name={pokemonData[selectedIndex]?.name}
-                    image={pokemonData[selectedIndex]?.image}
+    <Provider store={store}>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Container>
+                <PokedexUI className="nes-container is-rounded">
+                  <PokedexHeader />
+                  <PokedexSort pokemonList={sortedPokemonData} setPokemonList={handleSort} />
+                  <button onClick={() => setIsFilterOpen(true)}>타입으로 필터링</button>
+                  <PokedexFilter
+                    isOpen={isFilterOpen}
+                    onClose={() => setIsFilterOpen(false)}
+                    onFilter={handleFilter}
                   />
-                  <CarouselContainer
-                    pokemonData={pokemonData}
-                    selectedIndex={selectedIndex}
-                    onSelect={handleSelect}
-                    emblaRef={emblaRef}
-                  />
-                </ContentWrapper>
-              </PokedexUI>
-            </Container>
-          }
-        />
-        <Route path="/pokemon/:id" element={<PokedexDetailsPage />} />
-      </Routes>
-    </Router>
+                  <ContentWrapper>
+                    <PokedexDetails
+                      number={filteredPokemonData[selectedIndex]?.number}
+                      name={filteredPokemonData[selectedIndex]?.name}
+                      image={filteredPokemonData[selectedIndex]?.image}
+                    />
+                    <CarouselContainer
+                      pokemonData={filteredPokemonData}
+                      selectedIndex={selectedIndex}
+                      onSelect={handleSelect}
+                      emblaRef={emblaRef}
+                    />
+                  </ContentWrapper>
+                </PokedexUI>
+              </Container>
+            }
+          />
+          <Route path="/pokemon/:id" element={<PokedexDetailsPage />} />
+        </Routes>
+      </Router>
+    </Provider>
   );
 };
 
