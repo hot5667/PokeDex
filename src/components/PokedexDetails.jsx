@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import TypeBadge from './TypeBadge'; 
+import TypeBadge from './TypeBadge';
 
 const DetailsContainer = styled.div`
   display: flex;
@@ -31,11 +31,10 @@ const TypesContainer = styled.div`
 const PokedexDetails = ({ number, name, image, types = [] }) => {
   const navigate = useNavigate();
 
-  const typeNames = Array.isArray(types) && types.length > 0
-    ? types.map((type, index) => {
-        const typeName = typeof type === 'string' ? type : type.name;
-        return <TypeBadge key={index} type={typeName} />;
-      })
+  const typeNames = Array.isArray(types) && types.every(type => typeof type === 'string')
+    ? types.map((type, index) => (
+      <TypeBadge key={type} type={type} />
+    ))
     : ' ';
 
   const handleImageClick = () => {

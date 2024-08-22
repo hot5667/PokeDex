@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { typeColors, koTypeNames } from '../constants/typeName'; 
+import { typeNamekr } from '../constants/typeName'; 
 
 const Badge = styled.div`
-  background-color: ${(props) => typeColors[props.type] || '#ccc'};
+  background-color: ${(props) => props.color || '#ccc'};
   color: #fff;
   border-radius: 12px;
   padding: 8px 16px;
@@ -14,8 +14,16 @@ const Badge = styled.div`
 `;
 
 const TypeBadge = ({ type }) => {
-  const typeName = koTypeNames[type] || type;
-  return <Badge type={type}>{typeName}</Badge>;
+  const typeInfo = typeof type === 'string' ? typeNamekr[type] : type;
+  const typeName = typeInfo?.name || type;
+  const typeColor = typeInfo?.color || '#ccc';
+
+  if (!typeName) {
+    console.error('Invalid type:', type);
+    return null;
+  }
+
+  return <Badge color={typeColor}>{typeName}</Badge>;
 };
 
 export default TypeBadge;

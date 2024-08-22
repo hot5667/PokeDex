@@ -1,41 +1,74 @@
-export const typeColors = {
-  bug: '#a8b820',
-  dark: '#705848',
-  dragon: '#7038f8',
-  electric: '#f8d030',
-  fairy: '#fcb9e9',
-  fighting: '#c03028',
-  fire: '#f08030',
-  flying: '#a890f0',
-  ghost: '#705898',
-  grass: '#78c850',
-  ground: '#e0c068',
-  ice: '#98d8d8',
-  normal: '#a8a878',
-  poison: '#a040a0',
-  psychic: '#f85888',
-  rock: '#b8a038',
-  steel: '#b8b8d0',
-  water: '#6890f0',
-};
-
-export const koTypeNames = {
-  bug: '벌레',
-  dark: '어둠',
-  dragon: '드래곤',
-  electric: '전기',
-  fairy: '요정',
-  fighting: '격투',
-  fire: '불꽃',
-  flying: '비행',
-  ghost: '유령',
-  grass: '풀',
-  ground: '땅',
-  ice: '얼음',
-  normal: '노말',
-  poison: '독',
-  psychic: '에스퍼',
-  rock: '바위',
-  steel: '강철',
-  water: '물',
+export const typeNamekr = {
+  bug: {
+    name: '벌레',
+    color: '#A8B820'
+  },
+  dark: {
+    name: '악',
+    color: '#705848'
+  },
+  dragon: {
+    name: '드래곤',
+    color: '#7038F8'
+  },
+  electric: {
+    name: '전기',
+    color: '#F8D030'
+  },
+  fairy: {
+    name: '페어리',
+    color: '#EE99AC'
+  },
+  fighting: {
+    name: '격투',
+    color: '#C03028'
+  },
+  fire: {
+    name: '불',
+    color: '#F08030'
+  },
+  flying: {
+    name: '비행',
+    color: '#A890F0'
+  },
+  ghost: {
+    name: '고스트',
+    color: '#705898'
+  },
+  grass: {
+    name: '풀',
+    color: '#78C850'
+  },
+  ground: {
+    name: '땅',
+    color: '#E0C068'
+  },
+  ice: {
+    name: '얼음',
+    color: '#98D8D8'
+  },
+  normal: {
+    name: '노말',
+    color: '#A8A878'
+  },
+  poison: {
+    name: '독',
+    color: '#A040A0'
+  },
+  psychic: {
+    name: '에스퍼',
+    color: '#F85888'
+  },
+  rock: {
+    name: '바위',
+    color: '#B8A038'
+  },
+  steel: {
+    name: '강철',
+    color: '#B8B8D0'
+  },
+  water: {
+    name: '물',
+    color: '#6890F0'
+  },
 };
