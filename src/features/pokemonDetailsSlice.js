@@ -31,19 +31,19 @@ export const { fetchPokemonDetails, fetchPokemonDetailsFulfilled, fetchPokemonDe
 export default pokemonDetailsSlice.reducer;
 
 // 셀렉터 정의
-const selectPokemonDetailsState = (state) => state.pokemonDetails;
+const selectPokemonDetailsState = (state) => state.pokemonDetails || {};
 
 export const selectPokemonDetails = createSelector(
   [selectPokemonDetailsState],
-  (pokemonDetails) => pokemonDetails.data
+  (pokemonDetailsState) => pokemonDetailsState?.data
 );
 
 export const selectPokemonDetailsLoading = createSelector(
   [selectPokemonDetailsState],
-  (pokemonDetails) => pokemonDetails.isLoading
+  (pokemonDetailsState) => pokemonDetailsState?.isLoading
 );
 
 export const selectPokemonDetailsError = createSelector(
   [selectPokemonDetailsState],
-  (pokemonDetails) => pokemonDetails.error
+  (pokemonDetailsState) => pokemonDetailsState?.error
 );

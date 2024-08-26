@@ -9,10 +9,9 @@ import PokedexHeader from './components/PokedexHeader';
 import PokedexDetails from './components/PokedexDetails';
 import PokedexDetailsPage from './components/PokedexDetailsPage';
 import CarouselContainer from './components/CarouselContainer';
-// import LoadingBar from './pages/LoadingPage';
-// import ErrorPage from './pages/ErrorPage';
 import PokedexSort from './components/PokedexSort';
 import PokedexFilter from './components/PokedexFilter';
+import PokedexSearch from './components/PokedexSerch'; 
 import store from './store'; 
 
 const FullScreenContainer = styled.div`
@@ -54,6 +53,37 @@ const ContentWrapper = styled.div`
   overflow: hidden;
 `;
 
+const ControlsWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 0 16px;
+`;
+
+const Button = styled.button`
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  margin: 0 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    background-color: #004080;
+    transform: scale(0.98);
+  }
+`;
+
 const App = () => {
   const dispatch = useDispatch();
   const { data: pokemonData, isLoading, error } = useSelector(state => state.pokemonBasic);
@@ -61,6 +91,7 @@ const App = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [sortedPokemonData, setSortedPokemonData] = useState([]);
   const [filteredPokemonData, setFilteredPokemonData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [emblaRef, emblaApi] = useEmblaCarousel({
     axis: 'y',
     dragFree: true,
@@ -84,6 +115,22 @@ const App = () => {
       setFilteredPokemonData(pokemonData);
     }
   }, [pokemonData]);
+
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredPokemonData(sortedPokemonData);
+    } else {
+      const { consonants: searchConsonants, vowels: searchVowels } = extractConsonantsAndVowels(searchTerm.toLowerCase());
+      const filteredData = sortedPokemonData.filter(pokemon => {
+        const { consonants: pokemonConsonants, vowels: pokemonVowels } = extractConsonantsAndVowels(pokemon.name.toLowerCase());
+        return (
+          pokemonConsonants.includes(searchConsonants) &&
+          pokemonVowels.includes(searchVowels)
+        );
+      });
+      setFilteredPokemonData(filteredData);
+    }
+  }, [searchTerm, sortedPokemonData]);
 
   const handleSort = (sortedData) => {
     setSortedPokemonData(sortedData);
@@ -119,22 +166,6 @@ const App = () => {
     return () => emblaApi.off('select', onSelect);
   }, [emblaApi]);
 
-  // if (isLoading) {
-  //   return (
-  //     <FullScreenContainer>
-  //       <LoadingBar />
-  //     </FullScreenContainer>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <FullScreenContainer>
-  //       <ErrorPage errorCode={500} message={error} />
-  //     </FullScreenContainer>
-  //   );
-  // }
-
   return (
     <Provider store={store}>
       <Router>
@@ -145,8 +176,11 @@ const App = () => {
               <Container>
                 <PokedexUI className="nes-container is-rounded">
                   <PokedexHeader />
-                  <PokedexSort pokemonList={sortedPokemonData} setPokemonList={handleSort} />
-                  <button onClick={() => setIsFilterOpen(true)}>타입으로 필터링</button>
+                  <ControlsWrapper>
+                    <PokedexSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                    <Button onClick={() => setIsFilterOpen(true)}>타입으로 필터링</Button>
+                    <PokedexSort pokemonList={sortedPokemonData} setPokemonList={handleSort} />
+                  </ControlsWrapper>
                   <PokedexFilter
                     isOpen={isFilterOpen}
                     onClose={() => setIsFilterOpen(false)}
@@ -174,6 +208,16 @@ const App = () => {
       </Router>
     </Provider>
   );
+};
+
+// 자음 및 모음 추출 함수
+const extractConsonantsAndVowels = (str) => {
+  const vowels = /[aeiouAEIOU]/g;
+  const consonants = /[^aeiouAEIOU]/g;
+  return {
+    vowels: str.match(vowels)?.join('') || '',
+    consonants: str.match(consonants)?.join('') || ''
+  };
 };
 
 export default App;

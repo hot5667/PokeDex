@@ -1,11 +1,12 @@
 import { typeNamekr } from '../constants/typeName';
+import { fetchPokemonDetailsFulfilled, fetchPokemonDetailsRejected } from '../features/pokemonDetailsSlice';
 
 export const pokemonDetailsMiddleware = (store) => (next) => async (action) => {
   if (action.type === 'pokemon/fetchPokemonDetails') {
     try {
       const { id } = action.payload;
       const numericId = id.replace(/^0+/, '');
-      console.log(`포켓몬 상세 정보를 가져오는 중: ID = ${numericId}`);
+      console.log(`포켓몬 상세 정보 가져오는 중: ID = ${numericId}`);
 
       // 포켓몬 데이터 요청
       const pokemonResponse = await fetch(`${import.meta.env.VITE_REACT_APP_POKEMON_API}/pokemon/${numericId}`);
@@ -37,7 +38,7 @@ export const pokemonDetailsMiddleware = (store) => (next) => async (action) => {
         };
       });
       console.log('한국어 이름:', koreanName);
-      console.log('타입 데이터:', types);
+      console.log('타입:', types);
 
       // 플레이버 텍스트
       const flavorTextEntry = speciesData.flavor_text_entries.find(entry => entry.language.name === 'ko');
@@ -45,23 +46,17 @@ export const pokemonDetailsMiddleware = (store) => (next) => async (action) => {
       console.log('플레이버 텍스트:', flavorText);
 
       // 데이터 스토어에 디스패치
-      store.dispatch({
-        type: 'pokemon/fetchPokemonDetails/fulfilled',
-        payload: {
-          name: koreanName,
-          types: types,
-          description: flavorText,
-          sprites: pokemonData.sprites,
-          number: numericId,
-        },
-      });
+      store.dispatch(fetchPokemonDetailsFulfilled({
+        name: koreanName,
+        types: types,
+        description: flavorText,
+        sprites: pokemonData.sprites,
+        number: numericId,
+      }));
 
     } catch (error) {
       console.error('에러 발생:', error.message);
-      store.dispatch({
-        type: 'pokemon/fetchPokemonDetails/rejected',
-        payload: `에러 발생: ${error.message}`,
-      });
+      store.dispatch(fetchPokemonDetailsRejected(`에러 발생: ${error.message}`));
     }
   }
 

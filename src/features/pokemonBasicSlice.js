@@ -1,4 +1,3 @@
-// features/pokemonBasicSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchPokemonBasicData = createAsyncThunk(

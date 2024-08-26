@@ -2,13 +2,9 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-// import LoadingPage from '../pages/LoadingPage';  
-// import ErrorPage from '../pages/ErrorPage';
-import { 
-  selectPokemonDetails, 
-  selectPokemonDetailsLoading, 
-  selectPokemonDetailsError 
-} from '../features/pokemonDetailsSlice';
+import LoadingBar from '../pages/LodingPage';
+import ErrorPage from '../pages/ErrorPage';
+import { selectPokemonDetails, selectPokemonDetailsLoading, selectPokemonDetailsError } from '../features/pokemonDetailsSlice';
 
 const Container = styled.div`
   display: flex;
@@ -46,7 +42,7 @@ const PokemonTypes = styled.div`
 `;
 
 const PokemonType = styled.div`
-  background-color: ${props => props.color || '#ccc'};
+  background-color: ${props => props.color};
   color: white;
   padding: 8px;
   border-radius: 8px;
@@ -61,32 +57,32 @@ const PokemonDescription = styled.p`
 const PokedexDetailsPage = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const pokemonDetails = useSelector(selectPokemonDetails);
+  const pokemonDetails = useSelector(selectPokemonDetails) || {}; // 초기 상태를 빈 객체로 설정
   const isLoading = useSelector(selectPokemonDetailsLoading);
   const error = useSelector(selectPokemonDetailsError);
 
   useEffect(() => {
-    if (id) {
-      dispatch({ type: 'pokemon/fetchPokemonDetails', payload: { id } });
-    }
+    dispatch({ type: 'pokemon/fetchPokemonDetails', payload: { id } });
   }, [dispatch, id]);
 
-  // if (isLoading) {
-  //   return (
-  //     <Container>
-  //       <LoadingPage />
-  //     </Container>
-  //   );
-  // }
-
-  // ErrorPage를 숨기고, 에러 발생 시 빈 화면을 렌더링
-  if (error) {
-    console.error(`Error: ${error}`); // 콘솔에 에러 메시지 출력
-    return null; // 빈 화면을 반환
+  if (isLoading) {
+    return (
+      <Container>
+        <LoadingBar />
+      </Container>
+    );
   }
 
-  if (!pokemonDetails) {
-    return null; // 데이터가 없을 때도 빈 화면을 반환
+  if (error) {
+    return (
+      <Container>
+        <ErrorPage errorCode={500} message={error} />
+      </Container>
+    );
+  }
+
+  if (!pokemonDetails.name) {
+    return null; // 데이터를 아직 받지 못했을 때 아무것도 렌더링하지 않음
   }
 
   return (
@@ -96,7 +92,7 @@ const PokedexDetailsPage = () => {
         <PokemonName>{pokemonDetails.name}</PokemonName>
         <PokemonTypes>
           {pokemonDetails.types?.map((type, index) => (
-            <PokemonType key={index} color={type.color || '#ccc'}>
+            <PokemonType key={index} color={type.color}>
               {type.name}
             </PokemonType>
           ))}
