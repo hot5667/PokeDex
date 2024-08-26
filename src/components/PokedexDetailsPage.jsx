@@ -2,94 +2,108 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { fetchPokemonDetails } from '../features/pokemonSlice';
-import ErrorPage from '../pages/ErrorPage';
-import TypeBadge from './TypeBadge';
+// import LoadingPage from '../pages/LoadingPage';  
+// import ErrorPage from '../pages/ErrorPage';
+import { 
+  selectPokemonDetails, 
+  selectPokemonDetailsLoading, 
+  selectPokemonDetailsError 
+} from '../features/pokemonDetailsSlice';
 
-
-const FullScreenContainer = styled.div`
+const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #fff;
+  background-color: #f8f9fa;
+  padding: 20px;
 `;
 
-const DetailsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 50%;
-  padding: 20px;
-  background-color: #fff;
+const PokemonDetailsCard = styled.div`
+  background-color: white;
   border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  max-width: 600px;
+  text-align: center;
 `;
 
 const PokemonImage = styled.img`
-  width: 480px;
-  height: 480px;
-  image-rendering: pixelated;
+  width: 150px;
+  height: 150px;
 `;
 
-const TypeList = styled.div`
+const PokemonName = styled.h1`
+  font-size: 24px;
+  font-weight: bold;
+`;
+
+const PokemonTypes = styled.div`
+  margin-top: 16px;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
+  gap: 8px;
+`;
+
+const PokemonType = styled.div`
+  background-color: ${props => props.color || '#ccc'};
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  font-weight: bold;
+`;
+
+const PokemonDescription = styled.p`
+  margin-top: 16px;
+  font-size: 16px;
 `;
 
 const PokedexDetailsPage = () => {
-  const { id } = useParams(); 
   const dispatch = useDispatch();
-  const { data: pokemonDetails, isLoading, error } = useSelector((state) => state.pokemon);
+  const { id } = useParams();
+  const pokemonDetails = useSelector(selectPokemonDetails);
+  const isLoading = useSelector(selectPokemonDetailsLoading);
+  const error = useSelector(selectPokemonDetailsError);
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchPokemonDetails(id));
+      dispatch({ type: 'pokemon/fetchPokemonDetails', payload: { id } });
     }
-  }, [id, dispatch]);
+  }, [dispatch, id]);
 
-  if (isLoading) {
-    return (
-      <FullScreenContainer>
-        <div>Loading...</div>
-      </FullScreenContainer>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <Container>
+  //       <LoadingPage />
+  //     </Container>
+  //   );
+  // }
 
+  // ErrorPage를 숨기고, 에러 발생 시 빈 화면을 렌더링
   if (error) {
-    return (
-      <FullScreenContainer>
-        <ErrorPage errorCode={500} message={error} />
-      </FullScreenContainer>
-    );
+    console.error(`Error: ${error}`); // 콘솔에 에러 메시지 출력
+    return null; // 빈 화면을 반환
   }
 
   if (!pokemonDetails) {
-    return (
-      <FullScreenContainer>
-        <ErrorPage errorCode={404} message="포켓몬을 찾을 수 없습니다." />
-      </FullScreenContainer>
-    );
+    return null; // 데이터가 없을 때도 빈 화면을 반환
   }
 
-  const { sprites, name, types, description } = pokemonDetails;
-  const typeNames = Array.isArray(types) && types.length > 0 
-  ? types.map(type => <TypeBadge key={type} type={type} />)
-  : 'Unknown';
   return (
-    <FullScreenContainer>
-      <DetailsContainer>
-        <PokemonImage
-          className='nes-container is-rounded'
-          src={sprites?.front_default || 'placeholder_image_url'}
-          alt={name || 'Unknown'}
-        />
-        <h2>{name || 'Unknown'}</h2>
-        <div>타입: {typeNames}</div>
-        <p>{description || 'No description available.'}</p>
-      </DetailsContainer>
-    </FullScreenContainer>
+    <Container>
+      <PokemonDetailsCard>
+        <PokemonImage src={pokemonDetails.sprites?.front_default} alt={pokemonDetails.name} />
+        <PokemonName>{pokemonDetails.name}</PokemonName>
+        <PokemonTypes>
+          {pokemonDetails.types?.map((type, index) => (
+            <PokemonType key={index} color={type.color || '#ccc'}>
+              {type.name}
+            </PokemonType>
+          ))}
+        </PokemonTypes>
+        <PokemonDescription>{pokemonDetails.description}</PokemonDescription>
+      </PokemonDetailsCard>
+    </Container>
   );
 };
 

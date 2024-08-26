@@ -9,8 +9,8 @@ import PokedexHeader from './components/PokedexHeader';
 import PokedexDetails from './components/PokedexDetails';
 import PokedexDetailsPage from './components/PokedexDetailsPage';
 import CarouselContainer from './components/CarouselContainer';
-import LoadingBar from './pages/LodingPage';
-import ErrorPage from './pages/ErrorPage';
+// import LoadingBar from './pages/LoadingPage';
+// import ErrorPage from './pages/ErrorPage';
 import PokedexSort from './components/PokedexSort';
 import PokedexFilter from './components/PokedexFilter';
 import store from './store'; 
@@ -119,21 +119,21 @@ const App = () => {
     return () => emblaApi.off('select', onSelect);
   }, [emblaApi]);
 
-  if (isLoading) {
-    return (
-      <FullScreenContainer>
-        <LoadingBar />
-      </FullScreenContainer>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <FullScreenContainer>
+  //       <LoadingBar />
+  //     </FullScreenContainer>
+  //   );
+  // }
 
-  if (error) {
-    return (
-      <FullScreenContainer>
-        <ErrorPage errorCode={500} message={error} />
-      </FullScreenContainer>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <FullScreenContainer>
+  //       <ErrorPage errorCode={500} message={error} />
+  //     </FullScreenContainer>
+  //   );
+  // }
 
   return (
     <Provider store={store}>

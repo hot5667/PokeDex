@@ -30,7 +30,7 @@ const LoadingText = styled.div`
   white-space: nowrap;
 `;
 
-const LoadingBar = () => {
+const LoadingPage = () => {
   const [text, setText] = useState('로딩중.');
   const [showSprite1, setShowSprite1] = useState(true); 
   const progressRef = useRef(null);
@@ -68,4 +68,4 @@ const LoadingBar = () => {
   );
 };
 
-export default LoadingBar;
+export default LoadingPage;
