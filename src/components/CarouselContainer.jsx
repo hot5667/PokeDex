@@ -26,7 +26,7 @@ const PokemonItem = styled.button`
   cursor: pointer;
   margin-bottom: 5px;
   padding: 1.5rem;
-  font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif; 
+  font-family: 'NeoDunggeunmoPro-Regular','Press Start 2P', cursive; 
   font-size: 20px; 
   letter-spacing: 1px;
 
