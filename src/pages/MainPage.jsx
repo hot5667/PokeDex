@@ -13,11 +13,16 @@ import ErrorPage from '../pages/ErrorPage';
 
 const Sidebar = styled.div`
   width: 300px;
-  height: 100vh;
+  height: 100%;
   position: fixed;
   left: 0;
-  top: 0;
+  top: 2.7%;
   padding: 20px;
+  max-height: 975px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center; 
 `;
 
 const MainContent = styled.div`
@@ -59,11 +64,11 @@ const ContentWrapper = styled.div`
 
 const ControlsWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+  justify-content: flex-end;;
+  align-items:center;
   padding: 0 16px;
   gap: 10px;
+  margin-top: 1%;
 `;
 
 const MainPage = () => {

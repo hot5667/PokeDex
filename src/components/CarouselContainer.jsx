@@ -11,6 +11,36 @@ const CarouselWrapper = styled.div`
 const CarouselViewport = styled.div`
   height: 100%;
   overflow-y: auto;
+
+  ::-webkit-scrollbar {
+    width: 16px;
+    background-color: #c0c0c0; 
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #c0c0c0; 
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #808080; 
+    border: 2px solid #c0c0c0; 
+    border-radius: 4px; /* 테두리의 둥글기 */
+    box-shadow: inset 1px 1px 2px #fff, inset -1px -1px 2px #000; 
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #404040; /* 호버 시 thumb 색상 */
+    box-shadow: inset 1px 1px 2px #000, inset -1px -1px 2px #fff; 
+  }
+
+  ::-webkit-scrollbar-button {
+    background-color: #c0c0c0; 
+    height: 16px; 
+  }
+
+  ::-webkit-scrollbar-corner {
+    background-color: #c0c0c0; 
+  }
 `;
 
 const CarouselContainer = styled.div`

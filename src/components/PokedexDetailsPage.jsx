@@ -25,8 +25,8 @@ const PokemonDetailsCard = styled.div`
 `;
 
 const PokemonImage = styled.img`
-  width: 150px;
-  height: 150px;
+  width: 250px;
+  height: 250px;
 `;
 
 const PokemonName = styled.h1`
@@ -87,7 +87,7 @@ const PokedexDetailsPage = () => {
 
   return (
     <Container>
-      <PokemonDetailsCard>
+      <PokemonDetailsCard className='nes-container is-rounded'>
         <PokemonImage src={pokemonDetails.sprites?.front_default} alt={pokemonDetails.name} />
         <PokemonName>{pokemonDetails.name}</PokemonName>
         <PokemonTypes>
@@ -97,7 +97,7 @@ const PokedexDetailsPage = () => {
             </PokemonType>
           ))}
         </PokemonTypes>
-        <PokemonDescription>{pokemonDetails.description}</PokemonDescription>
+        <PokemonDescription className='nes-container with-title is-centered'>{pokemonDetails.description}</PokemonDescription>
       </PokemonDetailsCard>
     </Container>
   );

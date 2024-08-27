@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const Container = styled.div`
   width: 100%;
@@ -19,6 +20,8 @@ const ListItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1); /* 그림자 효과 */
+  transition: background-color 0.2s ease;
 
   &:hover {
     background-color: #e0e0e0;
@@ -62,29 +65,58 @@ const PokemonSelect = ({ onSelect }) => {
     setPokemonList(updatedPokemons);
   };
 
+  const handleOnDragEnd = (result) => {
+    if (!result.destination) return; // 드래그가 놓일 위치가 없으면 아무 작업도 하지 않음
+
+    const reorderedPokemons = Array.from(pokemonList);
+    const [movedPokemon] = reorderedPokemons.splice(result.source.index, 1); // 이동할 항목 제거
+    reorderedPokemons.splice(result.destination.index, 0, movedPokemon); // 새 위치에 항목 추가
+
+    localStorage.setItem('savedPokemons', JSON.stringify(reorderedPokemons));
+    setPokemonList(reorderedPokemons); // 상태 업데이트
+  };
+
   useEffect(() => {
     loadPokemonData();
-    
     const intervalId = setInterval(loadPokemonData, 1000);
-
     return () => clearInterval(intervalId);
   }, []);
 
   return (
     <Container className='nes-container is-rounded'>
-      {pokemonList.length > 0 ? (
-        pokemonList.map((pokemon) => (
-          <ListItem  key={pokemon.id}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <PokemonImage src={pokemon.image} alt={pokemon.name} />
-              {pokemon.name}
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {pokemonList.length > 0 ? (
+                pokemonList.map((pokemon, index) => (
+                  <Draggable key={pokemon.id} draggableId={pokemon.id} index={index}>
+                    {(provided) => (
+                      <ListItem
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <PokemonImage src={pokemon.image} alt={pokemon.name} />
+                          {pokemon.name}
+                        </div>
+                        <DeleteButton onClick={() => handleDelete(pokemon.id)}>삭제</DeleteButton>
+                      </ListItem>
+                    )}
+                  </Draggable>
+                ))
+              ) : (
+                <p>포켓몬 목록이 비어 있습니다.</p>
+              )}
+              {provided.placeholder}
             </div>
-            <DeleteButton onClick={() => handleDelete(pokemon.id)}>삭제</DeleteButton>
-          </ListItem>
-        ))
-      ) : (
-        <p>포켓몬 목록이 비어 있습니다.</p>
-      )}
+          )}
+        </Droppable>
+      </DragDropContext>
     </Container>
   );
 };
