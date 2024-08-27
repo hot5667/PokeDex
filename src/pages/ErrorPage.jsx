@@ -9,7 +9,7 @@ const Container = styled.div`
   justify-content: center;
   height: 100vh;
   color: #24292e;
-  font-family: 'NeoDunggeunmoPro-Regular', 'Press Start 2P', sans-serif; 
+  font-family: 'NeoDunggeunmoPro-Regular', sans-serif; 
   text-align: center;
 `;
 

@@ -1,11 +1,4 @@
 @font-face {
-   font-family: 'Press Start 2P';
-   src: url('/fonts/PressStart2P-Regular.ttf') format('truetype');
-   font-weight: normal;
-   font-style: normal;
-}
-  
-@font-face {
    font-family: 'Noto Sans KR';
    src: url('/fonts/NotoSansKR-Regular.ttf') format('truetype');
    font-weight: normal;

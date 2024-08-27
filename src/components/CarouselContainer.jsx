@@ -26,7 +26,7 @@ const PokemonItem = styled.button`
   cursor: pointer;
   margin-bottom: 5px;
   padding: 1.5rem;
-  font-family: 'NeoDunggeunmoPro-Regular','Press Start 2P', cursive; 
+  font-family: 'NeoDunggeunmoPro-Regular', cursive; 
   font-size: 20px; 
   letter-spacing: 1px;
 
@@ -37,7 +37,7 @@ const PokemonItem = styled.button`
       : '2px 2px 0 #000, -2px -2px 0 #000'};
 
   &.nes-btn {
-    font-family: 'NeoDunggeunmoPro-Regular','Press Start 2P', cursive; 
+    font-family: 'NeoDunggeunmoPro-Regular', cursive; 
     font-size: 20px; 
     letter-spacing: 1px; 
     background-image: linear-gradient(to bottom, #ffffff, #e0e0e0);

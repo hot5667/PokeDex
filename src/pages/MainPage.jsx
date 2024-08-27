@@ -32,7 +32,7 @@ const Container = styled.div`
   justify-content: center;
   height: 100vh;
   background-color: #d1d1d1;
-  font-family: 'NeoDunggeunmoPro-Regular', 'Press Start 2P', sans-serif;
+  font-family: 'NeoDunggeunmoPro-Regular', sans-serif;
 `;
 
 const PokedexUI = styled.div`
