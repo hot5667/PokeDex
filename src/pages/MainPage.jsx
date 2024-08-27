@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import useEmblaCarousel from 'embla-carousel-react';
 
@@ -21,8 +22,8 @@ const Sidebar = styled.div`
   max-height: 975px;
   display: flex;
   flex-direction: column;
-  justify-content: center; 
-  align-items: center; 
+  justify-content: center;
+  align-items: center;
 `;
 
 const MainContent = styled.div`
@@ -64,8 +65,8 @@ const ContentWrapper = styled.div`
 
 const ControlsWrapper = styled.div`
   display: flex;
-  justify-content: flex-end;;
-  align-items:center;
+  justify-content: flex-end;
+  align-items: center;
   padding: 0 16px;
   gap: 10px;
   margin-top: 1%;
@@ -73,6 +74,7 @@ const ControlsWrapper = styled.div`
 
 const MainPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { data: pokemonData, isLoading, error } = useSelector(state => state.pokemonBasic);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -100,10 +102,10 @@ const MainPage = () => {
     }
   }, [pokemonData]);
 
-  const handleSort = (sortedData) => {
+  const handleSort = useCallback((sortedData) => {
     setSortedPokemonData(sortedData);
     setFilteredPokemonData(sortedData);
-  };
+  }, []);
 
   const handleSelect = useCallback((index) => {
     setSelectedIndex(index);
@@ -123,42 +125,50 @@ const MainPage = () => {
     return () => emblaApi.off('select', onSelect);
   }, [emblaApi]);
 
-  if (isLoading) {
-    return <LoadingPage />;
+  useEffect(() => {
+    if (isLoading) {
+      navigate('/loading', { replace: true }); // Navigate to loading page
+    }
+  }, [isLoading, navigate]);
+
+  useEffect(() => {
+    if (error) {
+      navigate('/error', { state: { error }, replace: true }); // Navigate to error page
+    }
+  }, [error, navigate]);
+
+  if (!isLoading && !error && pokemonData) {
+    return (
+      <Container>
+        <Sidebar>
+          <PokemonSelect />
+        </Sidebar>
+        <MainContent>
+          <PokedexUI className="nes-container is-rounded">
+            <PokedexHeader />
+            <ControlsWrapper>
+              <PokedexSort pokemonList={sortedPokemonData} setPokemonList={handleSort} />
+            </ControlsWrapper>
+            <ContentWrapper>
+              <PokedexDetails
+                number={filteredPokemonData[selectedIndex]?.number}
+                name={filteredPokemonData[selectedIndex]?.name}
+                image={filteredPokemonData[selectedIndex]?.image}
+              />
+              <CarouselContainer
+                pokemonData={filteredPokemonData}
+                selectedIndex={selectedIndex}
+                onSelect={handleSelect}
+                emblaRef={emblaRef}
+              />
+            </ContentWrapper>
+          </PokedexUI>
+        </MainContent>
+      </Container>
+    );
   }
 
-  if (error) {
-    return <ErrorPage error={error} />;
-  }
-
-  return (
-    <Container>
-      <Sidebar>
-        <PokemonSelect />
-      </Sidebar>
-      <MainContent>
-        <PokedexUI className="nes-container is-rounded">
-          <PokedexHeader />
-          <ControlsWrapper>
-            <PokedexSort pokemonList={sortedPokemonData} setPokemonList={handleSort} />
-          </ControlsWrapper>
-          <ContentWrapper>
-            <PokedexDetails
-              number={filteredPokemonData[selectedIndex]?.number}
-              name={filteredPokemonData[selectedIndex]?.name}
-              image={filteredPokemonData[selectedIndex]?.image}
-            />
-            <CarouselContainer
-              pokemonData={filteredPokemonData}
-              selectedIndex={selectedIndex}
-              onSelect={handleSelect}
-              emblaRef={emblaRef}
-            />
-          </ContentWrapper>
-        </PokedexUI>
-      </MainContent>
-    </Container>
-  );
+  return null; // Render nothing if data is still loading or there is an error
 };
 
 export default MainPage;

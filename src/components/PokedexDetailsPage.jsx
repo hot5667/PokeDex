@@ -22,6 +22,7 @@ const PokemonDetailsCard = styled.div`
   padding: 24px;
   max-width: 600px;
   text-align: center;
+  position: relative; /* Added for button positioning */
 `;
 
 const PokemonImage = styled.img`
@@ -52,6 +53,23 @@ const PokemonType = styled.div`
 const PokemonDescription = styled.p`
   margin-top: 16px;
   font-size: 16px;
+`;
+
+const BackButton = styled.button`
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 16px;
+  
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
 const PokedexDetailsPage = () => {
@@ -88,6 +106,7 @@ const PokedexDetailsPage = () => {
   return (
     <Container>
       <PokemonDetailsCard className='nes-container is-rounded'>
+        <BackButton onClick={() => window.history.back()}>뒤로 가기</BackButton>
         <PokemonImage src={pokemonDetails.sprites?.front_default} alt={pokemonDetails.name} />
         <PokemonName>{pokemonDetails.name}</PokemonName>
         <PokemonTypes>
